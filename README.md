@@ -2,6 +2,8 @@
 
 **Won Chul Yang** — public edition v1.0 (2026)
 
+DOI: [10.5281/zenodo.21868976](https://doi.org/10.5281/zenodo.21868976)
+
 Part of the [Dual-Rail Carrier Program](https://github.com/ycmath/dual-rail-carrier-program) — the series hub (map, citation DAG, DOIs, release standards).
 
 The four-valued dual-rail carrier D4 (states UNK, FAL, TRU, CON; De Morgan

@@ -4,7 +4,8 @@ authors:
   - family-names: Yang
     given-names: Won Chul
 title: "No Genuine Degree-Three De Morgan Cohomology of the Dual-Rail Carrier, in Either Characteristic"
-version: v1.0.0
+version: v1.0.1
 date-released: 2026-08-10
+doi: 10.5281/zenodo.21868976
 license: Apache-2.0
 repository-code: "https://github.com/ycmath/demorgan-degree-three-no-go"
