@@ -1,0 +1,18 @@
+== [A] order complex of D4 over Q
+  [PASS] f-vector (4,5,2,0)
+  [PASS] Euler characteristic 1
+  [PASS] H^0,H^1,H^2 = 1,0,0
+  [PASS] C^3 = 0 (no 3-simplices)
+== [B] normalized multi-term distributive homology of D4 over Q
+  [PASS] mutual right-distributivity of (p1, join, meet, p2)
+  [PASS] d^2 = 0 (matrix-wise, n = 1..3)
+  [PASS] dim C_3 = 108
+  [PASS] rank d_3 = 25
+  [PASS] rank d_4 = 79
+  [PASS] dim H_3 = 108 - 25 - 79 = 4
+  [PASS] selected 79 independent im-columns
+  [PASS] im d_4 lies in ker d_3
+  [PASS] tau preserves ker d_3
+  [PASS] tau-eigenspace split on H_3 = (2, 2)
+
+VERDICT: ALL PASS

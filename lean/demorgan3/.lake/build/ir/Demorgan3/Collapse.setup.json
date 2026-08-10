@@ -1,0 +1,9 @@
+{"plugins": [],
+ "package": "Demorgan3",
+ "options": {},
+ "name": "Demorgan3.Collapse",
+ "isModule": false,
+ "importArts":
+ {"Demorgan3.Basic":
+  ["D:\\carrier-ASG\\lanes\\wcy2-audit\\release_p1\\repo\\lean\\demorgan3\\.lake\\build\\lib\\lean\\Demorgan3\\Basic.olean"]},
+ "dynlibs": []}

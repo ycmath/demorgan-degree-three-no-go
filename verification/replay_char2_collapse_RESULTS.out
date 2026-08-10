@@ -1,0 +1,27 @@
+== [1] raw facts (Proposition 2.5)
+  [PASS] value distribution W_A = {-2:4,-1:16,0:24,1:16,2:4}
+  [PASS] sup-norm W_A = 2
+  [PASS] mod-2 support W_A = 32
+  [PASS] tau-antisymmetry W_A
+  [PASS] sum over L^3 W_A = 0
+  [PASS] value distribution W_B = {-2:4,-1:16,0:24,1:16,2:4}
+  [PASS] sup-norm W_B = 2
+  [PASS] mod-2 support W_B = 32
+  [PASS] tau-antisymmetry W_B
+  [PASS] sum over L^3 W_B = 0
+== [2] four-corner identity (Lemma 5.3)
+  [PASS] (JVz)+(J^z)+(MVz)+(M^z) = x+y on all 64 triples
+== [3] collapse identity (Theorem 5.4)
+  [PASS] c_R^(r W_A + s W_B) mod 2 = (r+s)(rho x + rho y), 7 pairs (r,s)
+== [4] z-independence (Corollary 5.5)
+  [PASS] eta independent of z
+  [PASS] eta = rho x + rho y
+== [5] eta is not a 3-cocycle (Theorem 5.6)
+  [PASS] witness (TRU,TRU,CON,TRU): delta eta = 1
+  [PASS] 36 nonzero identity-free 4-tuples
+  [PASS] delta eta nonzero somewhere (total 128 entries)
+== [6] free diagonal tau-action on L^3 (Theorem 5.7 premise)
+  [PASS] no fixed points
+  [PASS] exactly 32 free orbits
+
+VERDICT: ALL PASS

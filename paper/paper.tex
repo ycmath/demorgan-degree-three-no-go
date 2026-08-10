@@ -1,0 +1,495 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1.1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage[colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue]{hyperref}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{fact}[theorem]{Fact}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{construction}[theorem]{Construction}
+\theoremstyle{remark}
+\newtheorem{remark}[theorem]{Remark}
+
+\newcommand{\F}{\mathbb{F}}
+\newcommand{\Z}{\mathbb{Z}}
+\newcommand{\Q}{\mathbb{Q}}
+\newcommand{\UNK}{\mathrm{UNK}}
+\newcommand{\TRU}{\mathrm{TRU}}
+\newcommand{\FAL}{\mathrm{FAL}}
+\newcommand{\CON}{\mathrm{CON}}
+\newcommand{\Dfour}{\mathrm{D4}}
+\newcommand{\Hom}{\operatorname{Hom}}
+\newcommand{\Ext}{\operatorname{Ext}}
+\newcommand{\HH}{\operatorname{HH}}
+\newcommand{\Map}{\operatorname{Map}}
+\newcommand{\cR}{c_R^W}
+\newcommand{\WA}{W_{\!A}}
+\newcommand{\WB}{W_{\!B}}
+
+\title{No Genuine Degree-Three De Morgan Cohomology\\ of the Dual-Rail Carrier, in Either Characteristic}
+\author{Won Chul Yang\\ \small Independent researcher \quad \texttt{wcy0969@gmail.com}}
+\date{Public edition v1.0 (2026)}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+The four-valued Belnap carrier $\Dfour$ --- the dual-rail lattice with states $\UNK,\FAL,\TRU,\CON$ and order-reversing De Morgan involution $\tau$ --- supports a single genuine essential cohomological obstruction: a degree-one, $2$-primary class living in $H^1(V_4;\F_2)=\F_2^2$, the \emph{carry}. A persistent question is whether the carrier also supports a \emph{genuine degree-three} De Morgan obstruction. The natural candidate is the $\tau$-antisymmetric $3$-cochain $\cR(x,y,z)$, a second lattice difference of a $\tau$-anti weight $W$, which is raw-nonzero (sup-norm $2$). We answer the question in the negative, \textbf{in both characteristics}, and identify the mechanism. In characteristic $0$ we prove a vanishing theorem: $H^3=0$ in each of the natural functorial carrier cochain theories --- semilattice/Hochschild, group cohomology of $\langle\tau\rangle$ and $V_4$, the order complex, the deformation core, and their $\tau$-equivariant refinements --- and we upgrade the list to a structural statement: the carrier's building blocks are separable algebras (the semilattice part integrally, hence in every characteristic; the group part exactly when the characteristic is not $2$), so every theory assembled from them vanishes above degree $0$ in characteristic $0$. We then pin the exact scope of this universality with an explicit counter-family: a normalized multi-term distributive homology theory, natural and functorial on the carrier, has $\dim_\Q H_3(\Dfour;\Q)=4$ --- so the \emph{unrestricted} universality claim is false, and the honest statement is universality over the separable/dual-admissible class. In characteristic $2$ --- the one place the ambient cohomology is genuinely nonzero ($H^3(V_4;\F_2)$ is $4$-dimensional) --- we prove the collapse theorem: an exact four-corner lattice identity forces $\cR \bmod 2 = (r{+}s)\,(\rho(x)+\rho(y))$, where $\rho$ is the rail parity and $(r,s)$ are the weight coordinates. The cochain is $z$-independent, is not a $V_4$ $3$-cocycle (explicit witness), defines no class in $H^3(V_4;\F_2)$, has vanishing full-module integral Bockstein class, and dies in the essential (nondegenerate-arity) quotient. The mechanism is uniform in both characteristics: the apparent cubic is the image of the degree-one carry parity under an arity-padding operator $S_{12}$, not a degree shift. Hence the carrier's degree-three De Morgan arc is closed: the obstruction is rigid at degree one. All finite identities are machine-verified in Lean~4 (core only) and independently replayed; the two characteristic-$0$ rank computations are shipped as replayable exact-arithmetic certificates.
+\end{abstract}
+
+\section{Introduction}
+
+The four-valued De Morgan carrier $\Dfour$ is the bounded distributive lattice on the states $\{\UNK,\FAL,\TRU,\CON\}$, with the order-reversing involution $\tau$ (De Morgan complement). It is the semantic substrate of Belnap's four-valued logic \cite{belnap}, and, in this series, of a dual-rail calculus tracking how information is \emph{resolved} (the face $R=\{\TRU,\FAL\}$) versus \emph{unresolved} ($\{\UNK,\CON\}$). Two companion releases of this series establish the carrier's complexity landscape: the exact negation-cost law $\nu=\mathrm{dec}$ on the resolved face \cite{wcy2}, and a cohomological reading of the negation-cost invariant as a character-tower length \cite{cohom}.
+
+The carrier's one genuine essential cohomological obstruction sits in degree \textbf{one}: the \emph{carry}, a $2$-primary class in
+\[
+\Ext^1_{\F_2[V_4]}(\mathrm{triv},\mathrm{triv}) \;=\; H^1(V_4;\F_2) \;=\; \F_2^2,
+\]
+where $V_4$ is the Klein four-group of dual-rail symmetries (\S\ref{sec:carry}). A recurring question one degree up is whether the carrier supports a \emph{genuine degree-three} De Morgan obstruction. The natural candidate is the \textbf{$\tau$-anti De Morgan $3$-cochain}
+\[
+\cR(x,y,z) \;=\; W((x\vee y)\vee z) - W((x\vee y)\wedge z) - W((x\wedge y)\vee z) + W((x\wedge y)\wedge z),
+\]
+a second lattice difference of a weight $W:\Dfour\to\Z$ with $W(\tau t)=-W(t)$. The candidate is \textbf{raw-nonzero}: its sup-norm on $\Dfour$ is $2$ (Proposition~\ref{prop:raw}). Does it represent a nonzero degree-$3$ class --- a genuine ``cubic carrier obstruction'' one level above the carry?
+
+\textbf{This paper proves it does not --- in either characteristic --- and identifies the precise mechanism.} The cubic is, uniformly, a \emph{degenerate arity-$3$ padding} of the degree-$1$ carry parity: it equals the image $S_{12}(\rho)$ of the rail parity $\rho=a+b$ under the padding operator $S_{12}(u)(x,y,z)=u(x)+u(y)$. ``Degree-$3$-looking'' $=$ padded degree-$1$.
+
+The argument has two halves and a bridge.
+\begin{itemize}
+\item \textbf{Characteristic $0$ (the vacuum, \S\ref{sec:char0}).} $H^3$ vanishes in every natural functorial carrier theory we name, so $[\cR]=0$ there. We strengthen the named-family check to a \emph{structural separability} statement, and --- crucially --- we \textbf{pin its exact scope} with an explicit counter-family, so the universality claim is honest: it holds over the separable/dual-admissible class, and provably not unrestrictedly.
+\item \textbf{Characteristic $2$ (where it could survive, \S\ref{sec:char2}).} This is the only place Maschke's theorem fails for $V_4$, so $H^3(V_4;\F_2)$ is genuinely nonzero --- yet we prove $\cR$ \emph{still} collapses, by an exact four-corner lattice identity, to padded degree-$1$.
+\end{itemize}
+
+The two halves combine into the main theorem (\S\ref{sec:main}): no genuine essential degree-three carrier De Morgan cohomology in any characteristic. This supplies the \emph{degree-axis rigidity} input for the series' program of consolidating the carrier's obstruction theory into a single degree-one class; the separations along other axes (the associator's bidegree, the quantum-error-correction comparison) are treated in forthcoming companion releases and are not claimed here (\S\ref{sec:scope}).
+
+\textbf{Verification discipline.} Every finite identity on $\Dfour$ is proved in full in the text, machine-verified in Lean~4 (core only, no \texttt{sorry}, no \texttt{native\_decide}; \S\ref{sec:mech}), and independently replayed by standalone scripts. Exactly two facts in the paper are \emph{certificate-level computational premises} --- the two characteristic-$0$ rank computations (Fact~\ref{fact:ranks} and the order-complex ranks in Theorem~\ref{thm:ng}(O), the latter also proved conceptually) --- and they are stated as such, with exact-rational replay scripts shipped alongside (\S\ref{sec:mech}).
+
+\section{The carrier, the involution, and the cubic candidate}
+
+\subsection{Dual-rail coordinates}
+
+\begin{definition}\label{def:carrier}
+The carrier $\Dfour$ is the set $L=(\F_2)^2$ in \emph{dual-rail coordinates} $u=(u_+,u_-)$:
+\[
+\UNK=(0,0),\quad \TRU=(1,0),\quad \FAL=(0,1),\quad \CON=(1,1),
+\]
+ordered componentwise, with meet $\wedge$ and join $\vee$ computed railwise (Boolean AND/OR per coordinate). This is the four-element Boolean lattice; $\UNK$ is the bottom, $\CON$ the top. The \textbf{De Morgan involution} is
+\[
+\tau(u) = u+(1,1) \quad (\text{bitwise NOT}),
+\]
+which is order-reversing with $\tau^2=\mathrm{id}$, and swaps $\UNK\leftrightarrow\CON$, $\TRU\leftrightarrow\FAL$. The \textbf{resolved face} is $R=\{\TRU,\FAL\}$; the \textbf{rail parity} is the $\F_2$-linear functional $\rho(u)=u_++u_-$, which equals $1$ exactly on $R$.
+\end{definition}
+
+Note that over $\F_2$ the involution $\tau$ is a \emph{translation} of the group $(L,+)$, not a group automorphism; this is why the $\tau$-anti objects below are not automatically objects of ordinary group cohomology, and why the failure in Theorem~\ref{thm:notcocycle} has to be checked rather than defined away.
+
+Throughout, $V_4$ denotes the Klein four-group. Two distinct roles of $V_4$ occur and must not be conflated: (i) the \emph{state group} $(L,+)\cong V_4$ (used in \S\ref{sec:notcocycle}, where $\Dfour$'s states are added railwise), and (ii) the \emph{symmetry group} $V_4=\langle\sigma,P\rangle$ of dual-rail symmetries generated by the De Morgan involution $\sigma=\tau$ and the monotone rail swap $P(u_+,u_-)=(u_-,u_+)$ (used in \S\ref{sec:carry}). Both are elementary abelian of order $4$, which is exactly why the same cohomology $H^*(V_4;\F_2)$ appears in both roles.
+
+\subsection{$\tau$-anti weights}
+
+\begin{definition}
+A \textbf{$\tau$-anti weight} is a function $W:L\to\Z$ with $W(\tau t)=-W(t)$ for all $t$. Define
+\[
+\WA(\UNK)=1,\ \WA(\CON)=-1,\ \WA(\TRU)=\WA(\FAL)=0;\qquad
+\WB(\TRU)=1,\ \WB(\FAL)=-1,\ \WB(\UNK)=\WB(\CON)=0.
+\]
+\end{definition}
+
+\begin{lemma}[the weight space]\label{lem:weights}
+The $\tau$-anti weights form a free $\Z$-module of rank $2$ with basis $\{\WA,\WB\}$: every $\tau$-anti weight is $W=r\,\WA+s\,\WB$ with $r=W(\UNK)$, $s=W(\TRU)$, uniquely.
+\end{lemma}
+
+\begin{proof}
+$\tau$ pairs the states as $\{\UNK,\CON\}$ and $\{\TRU,\FAL\}$. Anti-symmetry determines $W$ on each pair by its value on one member: $W(\CON)=-W(\UNK)$, $W(\FAL)=-W(\TRU)$. Hence $W$ is freely determined by $(W(\UNK),W(\TRU))=(r,s)$, and this $W$ equals $r\,\WA+s\,\WB$ by inspection on all four states.
+\end{proof}
+
+\subsection{The cubic candidate}
+
+\begin{definition}\label{def:cubic}
+For a $\tau$-anti weight $W$, the \textbf{De Morgan $3$-cochain} is
+\[
+\cR(x,y,z)= W(J\vee z)-W(J\wedge z)-W(M\vee z)+W(M\wedge z),\qquad J=x\vee y,\ M=x\wedge y .
+\]
+This is the alternating four-corner sum of $W$ over the square $\{J,M\}\times\{\vee z,\wedge z\}$ --- a second lattice (Newton) difference of $W$, first in the pair $(x,y)$, then in $z$.
+\end{definition}
+
+\begin{proposition}[raw facts]\label{prop:raw}
+On $\Dfour$:
+\begin{enumerate}
+\item $\|c_R^{\WA}\|_{\sup}=\|c_R^{\WB}\|_{\sup}=2$; the exact value distribution of $c_R^{\WA}$ over the $64$ triples is $\{-2{:}\,4,\ -1{:}\,16,\ 0{:}\,24,\ 1{:}\,16,\ 2{:}\,4\}$, and likewise for $\WB$.
+\item $\cR$ is $\tau$-antisymmetric: $\cR(\tau x,\tau y,\tau z)=-\cR(x,y,z)$.
+\item $\cR$ vanishes on $\mathrm{Fix}(\tau)^3$ (vacuously: $\mathrm{Fix}(\tau)=\varnothing$ on $\Dfour$) and sums to zero over $L^3$.
+\item The mod-$2$ support of $c_R^{\WA}$ has exactly $32$ of the $64$ triples.
+\end{enumerate}
+\end{proposition}
+
+\begin{proof}
+(2): $\tau$ is order-reversing, so it swaps $\vee\leftrightarrow\wedge$; hence $\tau$ maps the four corners of the defining sum for $(x,y,z)$ to the four corners for $(\tau x,\tau y,\tau z)$ with the $+$-signed and $-$-signed corners exchanged; combined with $W(\tau t)=-W(t)$, the total sign is $-1$. (1), (3), (4) are finite evaluations over the $64$ triples; they are corroborated by the shipped replay (\S\ref{sec:mech}) and none of them is load-bearing for the sequel --- the collapse theorem (Theorem~\ref{thm:collapse}) re-derives everything that matters.
+\end{proof}
+
+The candidate is thus \textbf{raw-nonzero}. The entire content of the paper is that \emph{raw-nonzero $\ne$ essential}: in every natural cohomological home, its class is zero or it fails to be a class at all.
+
+\section{The degree-one carry}\label{sec:carry}
+
+\begin{proposition}\label{prop:h1}
+Let $V_4=\langle\sigma,P\rangle$ be the symmetry Klein four-group acting on the carrier, and let $\F_2$ carry the trivial action. Then
+\[
+H^1(V_4;\F_2)=\Hom(V_4,\F_2)=\F_2^2,
+\]
+with basis the two characters $\chi_\sigma,\chi_P$ dual to the generators.
+\end{proposition}
+
+\begin{proof}
+For trivial action, a $1$-cocycle is a map $f:G\to\F_2$ with $f(gh)=f(g)+f(h)$ --- a homomorphism --- and the coboundaries are zero, so $H^1(G;\F_2)=\Hom(G,\F_2)$. For $G=V_4=C_2\times C_2$ a homomorphism to $\F_2$ is freely determined by its values on the two generators.
+\end{proof}
+
+\begin{definition}\label{def:carry}
+The \textbf{carry} is the class $\chi_\sigma+\chi_P\in H^1(V_4;\F_2)$: the character which is $1$ exactly on the symmetries acting nontrivially on the resolved face $R$. Its state-level shadow is the rail parity $\rho=a+b$ of Definition~\ref{def:carrier} (the indicator of $R$).
+\end{definition}
+
+Two published anchors of the series meet this object from the complexity side: on the resolved face the negation cost satisfies $\nu(f)=\mathrm{dec}(f)$ exactly \cite{wcy2}, and $\mathrm{dec}$ is the length of a minimal nested $\chi_\sigma$-character tower \cite{cohom}; the $\mathrm{dec}=0\to1$ boundary is the complexity shadow of the $\chi_\sigma$-component of the carry. Nothing below depends on more than Proposition~\ref{prop:h1}; the anchors are context.
+
+\begin{remark}
+$H^1(V_4;\F_2)=\F_2^2$ is nonzero in every characteristic-$2$ setting, while all the characteristic-$0$ homes of \S\ref{sec:char0} vanish. The degree-$3$ question is therefore only interesting in characteristic $2$ --- which is exactly where \S\ref{sec:char2} works, \emph{against} a nonzero ambient $H^3$.
+\end{remark}
+
+\section{Characteristic zero: the vacuum, and its exact scope}\label{sec:char0}
+
+Fix a field $k$ of characteristic $0$ (the reader may take $k=\Q$).
+
+\subsection{The M\"obius algebra}
+
+\begin{lemma}[M\"obius algebra; cf.\ Solomon \cite{solomon}, Greene \cite{greene}]\label{lem:mobius}
+Let $(L,\wedge)$ be a finite meet-semilattice and $k$ any commutative ring. The semilattice algebra $k[L,\wedge]$ (free $k$-module on $\{\delta_x\}_{x\in L}$, product $\delta_x\delta_y=\delta_{x\wedge y}$) is isomorphic, as a $k$-algebra, to the product ring $k^L$. The isomorphism is defined over $\Z$.
+\end{lemma}
+
+\begin{proof}
+Define $\varphi:k[L,\wedge]\to k^L$ on the basis by $\varphi(\delta_y)=(\mathbf 1[x\le y])_{x\in L}$, extended $k$-linearly. Then
+$\varphi(\delta_y)\varphi(\delta_{y'})=(\mathbf 1[x\le y]\cdot\mathbf 1[x\le y'])_x=(\mathbf 1[x\le y\wedge y'])_x=\varphi(\delta_{y\wedge y'})$
+(using that $x\le y$ and $x\le y'$ iff $x\le y\wedge y'$), so $\varphi$ is a ring homomorphism. Its matrix in the bases $\{\delta_y\}$ and the coordinate idempotents of $k^L$ is the incidence zeta matrix $\zeta(x,y)=\mathbf 1[x\le y]$; ordering $L$ by a linear extension of $\le$, $\zeta$ is upper unitriangular, hence invertible over $\Z$ (with inverse the M\"obius matrix $\mu$ \cite{rota}). So $\varphi$ is a $k$-algebra isomorphism for every $k$, defined over $\Z$.
+\end{proof}
+
+Dually the same holds for $(L,\vee)$. The lemma is characteristic-\emph{independent}: the semilattice building block splits over $\F_2$ as well. The characteristic-sensitivity of the carrier lives entirely in the group part (Lemma~\ref{lem:blocks}(2)).
+
+\subsection{Separability and the transfer lemma}
+
+\begin{definition}
+A $k$-algebra $A$ is \textbf{separable} if $A$ is projective as a module over its enveloping algebra $A^e=A\otimes_k A^{\mathrm{op}}$; equivalently, if there is a \emph{separability idempotent} $e=\sum a_i\otimes b_i\in A^e$ with $\sum a_ib_i=1$ and $(a\otimes1)e=(1\otimes a)e$ for all $a\in A$ \cite{demeyer}.
+\end{definition}
+
+\begin{lemma}[separability kills Hochschild cohomology]\label{lem:sep}
+If $A$ is separable then $\HH^n(A,M)=0$ for every $A$-bimodule $M$ and every $n>0$; the same holds for every cohomology of $A$ computed as $\Ext^n_{A^e}(A,-)$.
+\end{lemma}
+
+\begin{proof}
+$\HH^n(A,M)=\Ext^n_{A^e}(A,M)$ \cite[Ch.~IX]{cartaneilenberg}. If $A$ is $A^e$-projective, $\Ext^{>0}_{A^e}(A,-)$ vanishes identically.
+\end{proof}
+
+\begin{lemma}[the carrier's building blocks]\label{lem:blocks}
+\begin{enumerate}
+\item $k[L,\wedge]$ and $k[L,\vee]$ are separable for every field $k$ (indeed $k^L$ is separable with $e=\sum_x\delta_x\otimes\delta_x$, and Lemma~\ref{lem:mobius} transports it).
+\item $k[G]$ for $G\in\{\langle\tau\rangle\cong C_2,\ V_4\}$ is separable \textbf{iff} $\operatorname{char}k\nmid|G|$, i.e.\ iff $\operatorname{char}k\ne2$; the idempotent is $e=|G|^{-1}\sum_g g\otimes g^{-1}$ (Maschke).
+\item Separability is preserved by finite tensor products: $e_{A\otimes B}=e_A\otimes e_B$.
+\end{enumerate}
+\end{lemma}
+
+\begin{proof}
+(1) For $A=k^L$: $\sum\delta_x\delta_x=1$ and $(\delta_y\otimes1)e=\delta_y\otimes\delta_y=(1\otimes\delta_y)e$; transport along the $\Z$-defined isomorphism. (2) If $|G|$ is invertible, $e$ as displayed satisfies both conditions by direct computation. Conversely if $\operatorname{char}k=2$ then $k[C_2]\cong k[t]/(t^2)$ is local non-semisimple, hence not separable (a separable algebra over a field is semisimple \cite{demeyer}); $V_4$ contains $C_2$ as a retract, and separability passes to retracts. (3) Direct check.
+\end{proof}
+
+\subsection{Theorem NG: the named-family vanishing}
+
+\begin{theorem}[NG]\label{thm:ng}
+Let $k$ have characteristic $0$. Then $H^3=0$ --- and in particular the class of $\cR$ is zero --- in each of the following natural functorial carrier cochain theories on $\Dfour$:
+\begin{itemize}
+\item[\emph{(B)}] \emph{semilattice/Hochschild:} $\HH^n(k[L,\wedge],M)=0$ for all $n>0$ and all bimodules $M$; likewise for $(L,\vee)$.
+\item[\emph{(G)}] \emph{group cohomology:} $H^n(\langle\tau\rangle;k)=H^n(V_4;k)=0$ for all $n>0$.
+\item[\emph{(O)}] \emph{order complex:} $\Delta(\Dfour)$ is contractible; $\widetilde H^n(\Delta(\Dfour);k)=0$ for all $n$. Moreover $\Delta(\Dfour)$ has $f$-vector $(4,5,2,0)$ --- there are no $3$-simplices at all.
+\item[\emph{(Op)}] \emph{deformation core:} $\HH^2=\HH^3=0$ for the carrier's characteristic-$0$ core algebra (any composite of the \S4.2 blocks), so the Gerstenhaber deformation complex \cite{gerst1,gerst2} is rigid.
+\item[\emph{($\tau$)}] \emph{equivariant refinements:} the $\langle\tau\rangle$-equivariant refinement of each theory above also has $H^3=0$.
+\end{itemize}
+\end{theorem}
+
+\begin{proof}
+(B): Lemmas~\ref{lem:blocks}(1) $+$ \ref{lem:sep}. (G): Lemma~\ref{lem:blocks}(2) $+$ \ref{lem:sep}, noting $H^n(G;k)=\Ext^n_{k[G]}(k,k)$ and semisimplicity of $k[G]$ in characteristic $0$. (O): $\Delta(\Dfour)$ is the chain complex of the poset $\Dfour$. Since $\Dfour$ has a bottom element $\hat0=\UNK$ comparable to everything, every chain extends by $\hat0$; hence $\Delta(\Dfour)$ is a cone with apex $\hat0$, and cones are contractible. The $f$-vector is a direct count: $4$ vertices; $5$ comparable pairs ($\UNK{<}\TRU$, $\UNK{<}\FAL$, $\UNK{<}\CON$, $\TRU{<}\CON$, $\FAL{<}\CON$); $2$ two-chains ($\UNK{<}\TRU{<}\CON$, $\UNK{<}\FAL{<}\CON$); no $3$-chains. In particular $C^3=0$, so $H^3=0$ holds even before contractibility. (Op): Lemma~\ref{lem:blocks}(3) then \ref{lem:sep}. ($\tau$): $|\langle\tau\rangle|=2$ is invertible in $k$, so the averaging idempotent $(1+\tau^*)/2$ splits each cochain complex into $\pm$-isotypic summands and the equivariant (Borel) theory collapses onto the invariant summand of the underlying theory, with no higher group-cohomology contribution ($H^{>0}(C_2;k)=0$ by (G)); a summand of zero is zero.
+\end{proof}
+
+\begin{remark}[the (Op) caveat: a trivial rigidity]
+The vanishing at (Op) is characteristic-$0$ \emph{semisimplicity} --- a trivial rigidity. It is \textbf{not} evidence of ``no obstruction'': the genuine carry lives exactly where Maschke fails (characteristic $2$). We cite (Op) only for the characteristic-$0$ vacuum.
+\end{remark}
+
+\begin{remark}[scope of Theorem NG, verbatim]\label{rem:ngscope}
+NG is a no-go for the \emph{named} families (B), (G), (O), (Op) and their $\tau$-equivariant refinements, proved on $L=\Dfour$. It is not a no-go for artificial two-term complexes built to make $\cR$ a coboundary by fiat, and the \emph{exhaustivity} of the named list among ``all natural functorial theories'' is precisely the universality question addressed --- and bounded --- in \S\ref{subsec:scope}.
+\end{remark}
+
+\subsection{The vanishing is structural}
+
+\begin{corollary}[coefficient-free closure]\label{cor:closure}
+In characteristic $0$, every cohomology theory of every finite composite (tensor products, retracts) of the carrier's building blocks $\{$semilattice algebras, $k[\langle\tau\rangle]$, $k[V_4]\}$ that is computed as $\Ext$ over the enveloping algebra vanishes in all degrees $>0$, for all coefficient bimodules. The sole characteristic-sensitive building block is the group algebra of the symmetry group --- the home of the carry.
+\end{corollary}
+
+\begin{proof}
+Lemma~\ref{lem:blocks} gives separability of each block in characteristic $0$ and closure under $\otimes$; retracts of separable algebras are separable \cite{demeyer}. Lemma~\ref{lem:sep} kills all positive-degree $\Ext$. The characteristic-sensitivity statement contrasts Lemma~\ref{lem:mobius} (integral splitting) with Lemma~\ref{lem:blocks}(2).
+\end{proof}
+
+\subsection{The exact scope: an explicit counter-family}\label{subsec:scope}
+
+It is tempting to promote Theorem~\ref{thm:ng} to: \emph{``$H^3=0$ in every natural functorial characteristic-$0$ carrier cochain theory.''} One natural route is a factorization claim: every such theory factors through the carrier's Priestley/Birkhoff dual \cite{priestley}. The dual side is favorable:
+
+\begin{proposition}[dual reduction]\label{prop:dual}
+The Priestley/Birkhoff dual of $\Dfour$ is the two-point antichain $J(\Dfour)=\{\TRU,\FAL\}$ of join-irreducibles, with $\tau$ acting as the swap. Any characteristic-$0$ theory that factors naturally through the dual groupoid $[\{\TRU,\FAL\}/C_2]$ has $H^{>0}=0$.
+\end{proposition}
+
+\begin{proof}
+The join-irreducibles of $\Dfour$ are $\TRU$ and $\FAL$ ($\CON=\TRU\vee\FAL$ is not irreducible; $\UNK$ is the bottom), mutually incomparable, and $\tau$ swaps them. The action groupoid of $C_2$ acting freely on a $2$-point set is equivalent to a point; its category algebra is $M_2(k)$, which is separable, and Lemma~\ref{lem:sep} applies.
+\end{proof}
+
+\textbf{But the factorization premise is false without hypotheses --- and hence the unrestricted universality claim is false.} The witness is a multi-term distributive homology in the sense of Przytycki \cite{przytycki, przyputyra}.
+
+\begin{construction}[normalized multi-term distributive homology of $\Dfour$]\label{con:dh}
+Encode $\Dfour=\{0,1,2,3\}$ by bitmask ($\UNK=0$, $\TRU=1$, $\FAL=2$, $\CON=3$). Consider the four binary operations
+\[
+p_1(a,b)=a,\qquad \vee,\qquad \wedge,\qquad p_2(a,b)=b,
+\]
+each right-distributive over each of the others: for all $\star,\circ$ in the list, $(a\star b)\circ c=(a\circ c)\star(b\circ c)$. \emph{Proof:} for $\star=p_1$ (resp.\ $p_2$) both sides equal $a\circ c$ (resp.\ $b\circ c$); for $\circ=p_1$ both sides equal $a\star b$; for $\circ=p_2$ the left side is $c$ and the right side is $c\star c=c$ by idempotence of every operation in the list; for $\star,\circ\in\{\vee,\wedge\}$ the four cases are lattice associativity$+$commutativity$+$idempotence or distributivity.
+
+The \emph{normalized chain group} $C_n$ is the free $\Q$-module on tuples $(t_0,\dots,t_n)\in\Dfour^{n+1}$ with $t_i\ne t_{i+1}$; for an operation $\star$ the $i$-th face ($i\ge1$) is
+\[
+d_i^\star(t_0,\dots,t_n)=(t_0\star t_i,\dots,t_{i-1}\star t_i,\ t_{i+1},\dots,t_n),
+\]
+$d_0(t_0,\dots,t_n)=(t_1,\dots,t_n)$, with tuples that become degenerate set to $0$. Fix the coefficient vector $(1,-1,-1,0)$ on $(p_1,\vee,\wedge,p_2)$ and set
+\[
+d=\sum_i(-1)^i\bigl(d_i^{p_1}-d_i^{\vee}-d_i^{\wedge}\bigr).
+\]
+Then $d^2=0$: this is the multi-term distributive-homology boundary of Przytycki \cite{przytycki} for a family of mutually right-distributive operations; it is also re-verified exactly, matrix-by-matrix, in the shipped replay. Write $H^N_n(\Dfour;\Q)$ for its homology.
+\end{construction}
+
+\begin{fact}[certificate: the rank table]\label{fact:ranks}
+Over exact rational arithmetic: $\dim C_3=108$, $\operatorname{rank}d_3=25$, $\operatorname{rank}d_4=79$, so
+\[
+\dim_\Q H^N_3(\Dfour;\Q)=108-25-79=\mathbf 4,\qquad \text{with $\tau$-eigenspace split }(+,-)=(2,2);
+\]
+dually $\dim_\Q H^3_N=4$ with $\tau$-anti part of dimension $2$. \emph{(Certificate-level computational premise: exact-rational rank computation, $d^2=0$ asserted matrix-wise, replayable by the shipped script; \S\ref{sec:mech}.)}
+\end{fact}
+
+\begin{theorem}[the counter-family refutes unrestricted universality]\label{thm:counter}
+The theory $H^\bullet_N$ is natural and functorial on the carrier, $\tau$ acts on it, and it is not an artificial two-term complex; yet $H^3_N(\Dfour;\Q)=4\ne0$. Consequently:
+\begin{enumerate}
+\item $H^\bullet_N$ does not factor through the Priestley dual;
+\item the unrestricted claim ``every natural functorial characteristic-$0$ carrier theory has $H^3=0$'' is \textbf{false};
+\item Theorem~\ref{thm:ng}'s universality is exactly over the \textbf{separable/dual-admissible class}: the named families and all composites of separable building blocks (Corollary~\ref{cor:closure}) lie in it; $H^\bullet_N$ does not.
+\end{enumerate}
+\end{theorem}
+
+\begin{proof}
+Naturality: a lattice homomorphism $f$ commutes with each of the four operations (with $p_1,p_2$ trivially), hence with each face map, hence with $d$; degeneracy is preserved; so $f$ induces a chain map. $\tau$-equivariance: $\tau$ is a lattice anti-homomorphism with $\tau\vee=\wedge\tau$ railwise; in $d$ the $\vee$- and $\wedge$-terms carry the same coefficient $(-1)$, so conjugation by $\tau$ permutes them and fixes $d$; the $p_1$-term is fixed. Non-vanishing: Fact~\ref{fact:ranks}. Then (1) is the contrapositive of Proposition~\ref{prop:dual}, (2) is witnessed by $H^\bullet_N$, and (3) restates Corollary~\ref{cor:closure} plus (2).
+\end{proof}
+
+\begin{remark}[honest scope, certificate-relative]\label{rem:honest}
+Theorem~\ref{thm:ng} plus Corollary~\ref{cor:closure} delimit a \emph{sufficient} admissible class; Theorem~\ref{thm:counter} shows the class cannot be enlarged to ``all natural functorial theories''. We flag, additionally, that the \emph{maximal} admissible class is underdetermined by naturality and functoriality alone: whether certain degenerate decorations of an admissible theory (e.g.\ mapping-cone paddings of identity functors) are ``admissible'' is a convention, not a theorem, and our scope statements are relative to the stated class. A restricted universality theorem with a sharp admissibility hypothesis remains open (\S\ref{sec:scope}).
+\end{remark}
+
+\begin{remark}
+The counter-family exhibits a nonzero ambient $H^3$ of a \emph{different} cochain theory on the same lattice. It is \textbf{not} a claim that $\cR$ itself is essential --- $\cR$'s class remains zero/absent in every home considered (and \S\ref{sec:char2} kills it in characteristic $2$ directly).
+\end{remark}
+
+\section{Characteristic two: where it could survive --- and the collapse}\label{sec:char2}
+
+\subsection{The ambient cohomology is genuinely nonzero}
+
+\begin{proposition}\label{prop:ambient}
+$H^*(V_4;\F_2)=\F_2[a,b]$ with $\deg a=\deg b=1$; in particular $H^3(V_4;\F_2)=\langle a^3,a^2b,ab^2,b^3\rangle$ is $4$-dimensional, and $H^1(V_4;\F_2)=\F_2^2$ houses the carry.
+\end{proposition}
+
+\begin{proof}
+Standard: for an elementary abelian $2$-group of rank $n$, $H^*((C_2)^n;\F_2)$ is polynomial on $n$ degree-$1$ generators \cite[Ch.~II--III]{ademmilgram}; take $n=2$.
+\end{proof}
+
+\begin{corollary}
+By \S\ref{sec:char0}, a genuine degree-$3$ carrier obstruction could only exist in characteristic $2$. This is what makes the collapse below non-trivial: the cubic must be shown to die \emph{despite} a nonzero ambient $H^3$.
+\end{corollary}
+
+\subsection{The four-corner identity}
+
+\begin{lemma}[four-corner identity]\label{lem:fourcorner}
+In $(L,+)=(\F_2)^2$, for all $x,y,z\in L$, with $J=x\vee y$, $M=x\wedge y$:
+\[
+(J\vee z)+(J\wedge z)+(M\vee z)+(M\wedge z)=x+y .
+\]
+\end{lemma}
+
+\begin{proof}
+Railwise, for bits $p,r\in\F_2$: $p\vee r=p+r+pr$ and $p\wedge r=pr$, so $(p\vee r)+(p\wedge r)=p+r$. Applying this per rail to the pairs $(J,z)$ and $(M,z)$:
+\[
+(J\vee z)+(J\wedge z)+(M\vee z)+(M\wedge z)=(J+z)+(M+z)=J+M .
+\]
+Again railwise, $J+M=(x\vee y)+(x\wedge y)=x+y$.
+\end{proof}
+
+\subsection{The collapse theorem}
+
+\begin{theorem}[collapse]\label{thm:collapse}
+Let $W=r\,\WA+s\,\WB$ be any $\tau$-anti weight (Lemma~\ref{lem:weights}). Then, identically on $\Dfour^3$,
+\[
+\cR \bmod 2 = (r+s)\,\bigl(\rho(x)+\rho(y)\bigr).
+\]
+In particular $\cR\bmod2$ is \textbf{independent of $z$}, and equals the arity-padding $S_{12}(\bar\rho)$ of the rail parity, scaled by $(r{+}s)\bmod2$, where $S_{12}(u)(x,y,z):=u(x)+u(y)$.
+\end{theorem}
+
+\begin{proof}
+Write $\overline W=W\bmod2:L\to\F_2$. From the definitions, $\overline{\WA}=1+\rho$ (it is $1$ exactly on $\{\UNK,\CON\}$, the complement of $R$) and $\overline{\WB}=\rho$. Hence
+\[
+\overline W=\bar r(1+\rho)+\bar s\rho=\bar r+(\bar r+\bar s)\rho,
+\]
+an \emph{affine} function of the $\F_2$-\emph{linear} functional $\rho$. Mod $2$ the signs in Definition~\ref{def:cubic} disappear, so with $a_1=J\vee z$, $a_2=J\wedge z$, $a_3=M\vee z$, $a_4=M\wedge z$:
+\[
+\cR\bmod2=\sum_{i=1}^4\overline W(a_i)=4\bar r+(\bar r+\bar s)\sum_{i=1}^4\rho(a_i)
+=(\bar r+\bar s)\,\rho\Bigl(\sum_{i=1}^4 a_i\Bigr)
+=(\bar r+\bar s)\,\rho(x+y),
+\]
+using linearity of $\rho$ and the four-corner identity (Lemma~\ref{lem:fourcorner}); and $\rho(x+y)=\rho(x)+\rho(y)$.
+\end{proof}
+
+\begin{corollary}[degenerate arity]\label{cor:degenerate}
+$\cR\bmod2$ lies in the image of $S_{12}:\Map(L,\F_2)\to\Map(L^3,\F_2)$; it depends on $(x,y)$ only, and only through the degree-one datum $\rho$.
+\end{corollary}
+
+\subsection{It is not a cocycle, and defines no cubic class}\label{sec:notcocycle}
+
+Identify $L$ with the state group $V_4=(\F_2)^2$ under railwise addition, and let $\eta:=\cR\bmod2$ for any $W$ with $r+s$ odd --- i.e.\ $\eta(x,y,z)=\rho(x)+\rho(y)$ --- regarded as an inhomogeneous $3$-cochain on the group $V_4$ with trivial $\F_2$-coefficients. The bar differential is
+\[
+(\delta\eta)(g_1,g_2,g_3,g_4)=\eta(g_2,g_3,g_4)+\eta(g_1{+}g_2,g_3,g_4)+\eta(g_1,g_2{+}g_3,g_4)+\eta(g_1,g_2,g_3{+}g_4)+\eta(g_1,g_2,g_3).
+\]
+
+\begin{theorem}[not a $3$-cocycle]\label{thm:notcocycle}
+$\delta\eta\ne0$; an explicit witness is
+\[
+(\delta\eta)(\TRU,\TRU,\CON,\TRU)=1 .
+\]
+Consequently $\eta$ is not a $3$-cocycle of the state group, and defines \textbf{no} class in $H^3(V_4;\F_2)$ --- in particular it is none of the cubic classes $a^3,a^2b,ab^2,b^3$.
+\end{theorem}
+
+\begin{proof}
+With $\rho(\TRU)=\rho(\FAL)=1$, $\rho(\UNK)=\rho(\CON)=0$ and $\TRU+\TRU=\UNK$, $\TRU+\CON=\CON+\TRU=\FAL$:
+\[
+\eta(\TRU,\CON,\TRU)=1,\quad
+\eta(\UNK,\CON,\TRU)=0,\quad
+\eta(\TRU,\FAL,\TRU)=0,\quad
+\eta(\TRU,\TRU,\FAL)=0,\quad
+\eta(\TRU,\TRU,\CON)=0,
+\]
+and the five-term sum is $1$. (The full $\delta\eta$ table has $128$ nonzero entries, $36$ of them on identity-free $4$-tuples; the shipped replay enumerates them.)
+\end{proof}
+
+\subsection{The integral Bockstein class vanishes}
+
+At the integral level $c:=\cR$ satisfies $\tau c=-c$, so relative to $0\to\Z\xrightarrow{\times2}\Z\to\F_2\to0$ there is a visible cochain-level Bockstein representative $(\tau c-c)/2=-c$. The correct home for the resulting \emph{class} is the $\tau$-equivariant cohomology of the full lattice module, and there it dies:
+
+\begin{theorem}[no full-module Bockstein class]\label{thm:bockstein}
+The diagonal $\tau$-action on $L^3$ is free, so $\Z[L^3]\cong\Z[C_2]^{32}$ as a $C_2$-module. Hence $H^p(C_2;\Z[L^3])=0$ for all $p>0$, and the Bockstein image of $[\eta]$ in the full-module theory is $0$.
+\end{theorem}
+
+\begin{proof}
+$\tau u=u+(1,1)\ne u$ for every $u$, so no point of $L^3$ is fixed and the $64$ points fall into $32$ free orbits; choosing one point per orbit exhibits $\Z[L^3]$ as free of rank $32$ over $\Z[C_2]$. Cohomology with coefficients in a free (hence induced) module vanishes in positive degrees (Shapiro's lemma \cite[Ch.~XII]{cartaneilenberg}). Any Bockstein class of the full-module theory lives in such a group, hence is $0$.
+\end{proof}
+
+\subsection{The essential quotient kills it}
+
+\begin{definition}
+Let $C^3_{\mathrm{set}}=\Map(L^3,\F_2)$ and let the \textbf{degenerate submodule} $D^3\subset C^3_{\mathrm{set}}$ be the span of all cochains that factor through a proper coordinate projection $L^3\to L^S$, $S\subsetneq\{1,2,3\}$. The \textbf{essential quotient} is $C^3_{\mathrm{ess}}=C^3_{\mathrm{set}}/D^3$: it retains exactly the genuinely $3$-variable content of a cochain.
+\end{definition}
+
+\begin{corollary}\label{cor:essential}
+$\eta=\cR\bmod2$ factors through $(x,y)$ (Theorem~\ref{thm:collapse}), so $\eta\in D^3$ and $[\eta]=0$ in $C^3_{\mathrm{ess}}$. The candidate has no genuinely ternary content at all.
+\end{corollary}
+
+\section{The mechanism: arity padding, not a degree shift}\label{sec:mechanism}
+
+The operator realizing the cubic from the degree-one datum is
+\[
+S_{12}:\Map(L,\F_2)\to\Map(L^3,\F_2),\qquad S_{12}(u)(x,y,z)=u(x)+u(y),
+\]
+and Theorem~\ref{thm:collapse} says $\cR\bmod2=(r{+}s)\,S_{12}(\rho)$. Three standard degree-raising constructions are thereby \emph{excluded} as explanations of the cubic, each for a proven reason:
+\begin{enumerate}
+\item \textbf{Not a cup product.} A cup product of degree-$1$ classes of $H^1(V_4;\F_2)$ is a $3$-\emph{cocycle} representing an element of $\langle a^3,a^2b,ab^2,b^3\rangle$; $\eta$ is not a cocycle at all (Theorem~\ref{thm:notcocycle}).
+\item \textbf{Not Tate/periodicity.} Any periodicity image of a class is a class; $\eta$ defines no class.
+\item \textbf{Not a Bockstein.} The full-module integral Bockstein class vanishes (Theorem~\ref{thm:bockstein}).
+\end{enumerate}
+What remains is exactly what $S_{12}$ is: a \emph{degenerate arity-$3$ padding} of degree-one data (Corollary~\ref{cor:essential}). ``Degree-$3$-looking'' $=$ padded degree-$1$.
+
+\section{Main theorem}\label{sec:main}
+
+\begin{theorem}[no genuine degree-three De Morgan cohomology]\label{thm:main}
+On the dual-rail carrier $\Dfour$, there is no genuine essential degree-$3$ De Morgan obstruction, in any characteristic. Precisely: for every $\tau$-anti weight $W$, the cubic candidate $\cR$
+\begin{enumerate}
+\item has zero class in every characteristic-$0$ theory of the separable/dual-admissible class --- the named families (B), (G), (O), (Op) and their $\tau$-equivariant refinements included (Theorem~\ref{thm:ng}, Corollary~\ref{cor:closure}) --- with the admissible-class boundary exhibited sharply by the distributive-homology counter-family (Theorem~\ref{thm:counter});
+\item in characteristic $2$, where the ambient $H^3(V_4;\F_2)\ne0$, collapses identically to $(r{+}s)\,S_{12}(\rho)$: $z$-independent, not a $3$-cocycle (explicit witness), defining no class in $H^3(V_4;\F_2)$, with vanishing full-module Bockstein class, and vanishing in the essential quotient (Theorems~\ref{thm:collapse}--\ref{thm:bockstein}, Corollary~\ref{cor:essential}).
+\end{enumerate}
+In both characteristics the realizing mechanism is the arity-padding $S_{12}$ of the degree-one carry parity $\rho$ --- not a cup product, not periodicity, not a Bockstein (\S\ref{sec:mechanism}). The carrier's degree-$3$ De Morgan arc is closed: \textbf{the obstruction is rigid at degree one.}
+\end{theorem}
+
+\begin{proof}
+Part 1 is \S\ref{sec:char0}; part 2 is \S\ref{sec:char2}; the mechanism statements are \S\ref{sec:mechanism}, each reduced to a proved theorem.
+\end{proof}
+
+\section{Scope, and what is not claimed}\label{sec:scope}
+
+\begin{itemize}
+\item \textbf{$\Dfour$ only.} Every computation and theorem above is on the four-element carrier (or its two symmetry/state groups $V_4$). Nothing is claimed for larger De Morgan lattices; whether degree-one rigidity persists at $B_n$, $n\ge3$, is \textbf{open}, and a higher essential class there would be \emph{consistent} with Theorem~\ref{thm:main}.
+\item \textbf{Only this cubic.} The theorem closes the carrier's $\delta^2$-type De Morgan candidate $\cR$. Other cubic functionals on other complexes are different objects and are not addressed.
+\item \textbf{The admissible-class boundary is part of the theorem.} The characteristic-$0$ universality is exactly over the separable/dual-admissible class; the unrestricted universality is \emph{refuted}, not merely unproved; and the maximal admissible class is underdetermined by naturality alone (Remark~\ref{rem:honest}). A restricted universality theorem with a sharp admissibility hypothesis is an open problem.
+\item \textbf{Degree versus level.} The negation-cost filtration $\mathrm{dec}(f)$ of the companion releases \cite{wcy2,cohom} is a \emph{level} (complexity) parameter, not a cohomological degree; nothing here shifts the carry out of degree $1$. The separation of the carry from the associator (a bidegree statement) and its comparison with quantum-error-correction Bockstein towers are the subjects of forthcoming companion releases and are \textbf{not claimed here}.
+\item \textbf{Size $\ne$ obstruction.} The exact clone counts of the series (e.g.\ the ternary selector count $103{,}275$ on the odd flat carrier \cite{p3}) are cardinalities of a different $V_4$-governed object and play no role here.
+\end{itemize}
+
+\section{Mechanization and verification}\label{sec:mech}
+
+\textbf{Lean (structural spine).} All finite identities on $\Dfour$ are machine-verified in the Lean~4 library \texttt{Demorgan3} (core only; no mathlib, no \texttt{native\_decide}, no \texttt{sorry}, no \texttt{axiom} declarations; $24$ theorems, $22$ axiom-free, $2$ with kernel axiom profile exactly \texttt{[propext, Quot.sound]}; no classical choice anywhere): the weight-space lemma; the classification $\Hom(V_4,\F_2)=\F_2^2$; the four-corner identity ($64$ triples); the Boolean collapse for all parity pairs, its agreement with the integer mod-$2$ reduction, and $z$-independence; the integer-level collapse $2\mid(\cR(x,y,z)-(W(\UNK){+}W(\TRU))(\rho x{+}\rho y))$ for an arbitrary $\tau$-anti weight; the non-cocycle witness and $\delta\eta\ne0$; freeness of the diagonal $\tau$-action on $L^3$; and the order-complex counts ($f$-vector $(4,5,2,0)$, no $3$-chains, $\chi=1$, cone premise). See \texttt{lean/demorgan3/} and the frozen audit \texttt{axcheck.log}.
+
+\textbf{Replay (independent).} Two standalone exact-arithmetic scripts (Python, stdlib only) re-verify, with frozen outputs shipped alongside: \texttt{replay\_char2\_collapse.py} (raw facts, four-corner, collapse for seven integer coordinate pairs, $z$-independence, the full $\delta\eta$ table, the $32$ free $\tau$-orbits; ALL PASS) and \texttt{replay\_char0\_certificates.py} (the order-complex $\Q$-cohomology and the distributive-homology certificate: mutual distributivity, $d^2=0$ matrix-wise, rank table $108/25/79$, $\dim H_3=4$, $\tau$-split $(2,2)$, computed over \texttt{fractions.Fraction} independently of the programme-internal computation it reproduces; ALL PASS).
+
+The characteristic-$0$ rank computation is a \emph{certificate-level premise} of Fact~\ref{fact:ranks} only; every other statement is proved in the text, and the finite identities are additionally kernel-checked.
+
+\section*{Authorship and provenance}
+
+The mathematics is the author's, developed inside the author's carrier programme. AI assistance (Anthropic Claude family) was used for the machine-verification layer --- the Lean~4 development, the replay scripts, and manuscript preparation --- with the Lean~4 kernel as the acceptance gate for that layer. This is distinct from the two earlier AI-collaborative releases of the series, which are labelled as such. Corrections are invited.
+
+\begin{thebibliography}{99}
+
+\bibitem{belnap} N.~D. Belnap, \emph{A useful four-valued logic}, in: J.~M. Dunn, G.~Epstein (eds.), Modern Uses of Multiple-Valued Logic, Reidel, 1977, pp.~5--37. doi:10.1007/978-94-010-1161-7\_2
+
+\bibitem{przytycki} J.~H. Przytycki, \emph{Distributivity versus associativity in the homology theory of algebraic structures}, Demonstratio Math.\ 44 (2011), no.~4, 823--869. doi:10.1515/dema-2013-0337, arXiv:1109.4850
+
+\bibitem{przyputyra} J.~H. Przytycki, K.~K. Putyra, \emph{Homology of distributive lattices}, J.\ Homotopy Relat.\ Struct.\ 8 (2013), 35--65. doi:10.1007/s40062-012-0012-5
+
+\bibitem{solomon} L.~Solomon, \emph{The Burnside algebra of a finite group}, J.\ Combin.\ Theory 2 (1967), 603--615. doi:10.1016/S0021-9800(67)80064-4
+
+\bibitem{greene} C.~Greene, \emph{On the M\"obius algebra of a partially ordered set}, Adv.\ Math.\ 10 (1973), 177--187. doi:10.1016/0001-8708(73)90106-0
+
+\bibitem{rota} G.-C. Rota, \emph{On the foundations of combinatorial theory I: Theory of M\"obius functions}, Z.\ Wahrscheinlichkeitstheorie 2 (1964), 340--368. doi:10.1007/BF00531932
+
+\bibitem{demeyer} F.~DeMeyer, E.~Ingraham, \emph{Separable Algebras over Commutative Rings}, Lecture Notes in Math.\ 181, Springer, 1971. doi:10.1007/BFb0061226
+
+\bibitem{cartaneilenberg} H.~Cartan, S.~Eilenberg, \emph{Homological Algebra}, Princeton Univ.\ Press, 1956.
+
+\bibitem{gerst1} M.~Gerstenhaber, \emph{The cohomology structure of an associative ring}, Ann.\ of Math.\ 78 (1963), 267--288. doi:10.2307/1970343
+
+\bibitem{gerst2} M.~Gerstenhaber, \emph{On the deformation of rings and algebras}, Ann.\ of Math.\ 79 (1964), 59--103. doi:10.2307/1970484
+
+\bibitem{priestley} H.~A. Priestley, \emph{Representation of distributive lattices by means of ordered Stone spaces}, Bull.\ London Math.\ Soc.\ 2 (1970), 186--190. doi:10.1112/blms/2.2.186
+
+\bibitem{ademmilgram} A.~Adem, R.~J. Milgram, \emph{Cohomology of Finite Groups}, 2nd ed., Grundlehren Math.\ Wiss.\ 309, Springer, 2004. doi:10.1007/978-3-662-06280-7
+
+\bibitem{wcy2} W.~C. Yang, \emph{The Price of NOT on D4}, 2026. \url{https://github.com/ycmath/price-of-not-on-d4}, doi:10.5281/zenodo.21800033
+
+\bibitem{cohom} W.~C. Yang, \emph{The Cohomological Price of NOT}, 2026. \url{https://github.com/ycmath/cohomological-price-of-not}, doi:10.5281/zenodo.21775055
+
+\bibitem{p3} W.~C. Yang, \emph{Exact Selector Counting on the Odd Flat Carrier}, 2026. \url{https://github.com/ycmath/odd-flat-selector-count}, doi:10.5281/zenodo.21868044
+
+\end{thebibliography}
+
+\noindent Series hub: \url{https://github.com/ycmath/dual-rail-carrier-program}
+
+\end{document}

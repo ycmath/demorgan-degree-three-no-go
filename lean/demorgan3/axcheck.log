@@ -1,0 +1,24 @@
+'Demorgan3.tau_tau' does not depend on any axioms
+'Demorgan3.tau_ne' does not depend on any axioms
+'Demorgan3.rho_tau' does not depend on any axioms
+'Demorgan3.rho_add' does not depend on any axioms
+'Demorgan3.W_A_anti' does not depend on any axioms
+'Demorgan3.W_B_anti' does not depend on any axioms
+'Demorgan3.weight_space' depends on axioms: [propext, Quot.sound]
+'Demorgan3.four_corner' does not depend on any axioms
+'Demorgan3.Wbar_is_reduction' does not depend on any axioms
+'Demorgan3.collapse' does not depend on any axioms
+'Demorgan3.z_independent' does not depend on any axioms
+'Demorgan3.collapse_parity' depends on axioms: [propext, Quot.sound]
+'Demorgan3.delta_eta_witness' does not depend on any axioms
+'Demorgan3.eta_not_cocycle' does not depend on any axioms
+'Demorgan3.witness_identity_free' does not depend on any axioms
+'Demorgan3.tau_diag_free' does not depend on any axioms
+'Demorgan3.count_vertices' does not depend on any axioms
+'Demorgan3.count_edges' does not depend on any axioms
+'Demorgan3.count_two_chains' does not depend on any axioms
+'Demorgan3.no_three_chains' does not depend on any axioms
+'Demorgan3.euler_char' does not depend on any axioms
+'Demorgan3.unk_bottom' does not depend on any axioms
+'Demorgan3.linForm_isHom' does not depend on any axioms
+'Demorgan3.hom_classify' does not depend on any axioms

@@ -1,0 +1,10 @@
+cff-version: 1.1.0
+message: "If you use this work, please cite it as below."
+authors:
+  - family-names: Yang
+    given-names: Won Chul
+title: "No Genuine Degree-Three De Morgan Cohomology of the Dual-Rail Carrier, in Either Characteristic"
+version: v1.0.0
+date-released: 2026-08-10
+license: Apache-2.0
+repository-code: "https://github.com/ycmath/demorgan-degree-three-no-go"
